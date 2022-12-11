@@ -19,6 +19,6 @@ def seed_db():
     """_summary_
     """
 if __name__ == "__main__":
-    scheduler.add_job(id = 'Scheduled Task', func=scheduleTask, trigger="interval", seconds=3)
+    scheduler.add_job(id = 'Scheduled Task', func=scheduleTask, trigger="interval", seconds=30)
     scheduler.start()
     cli()

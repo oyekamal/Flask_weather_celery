@@ -1,0 +1,1 @@
+send mail to Islamabad with temperature 291.95

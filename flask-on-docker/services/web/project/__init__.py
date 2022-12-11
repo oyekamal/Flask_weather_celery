@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from .weather_request import get_weather_by_city
-
+import json
 from flask_apscheduler import APScheduler
 scheduler = APScheduler()
 
@@ -43,6 +43,16 @@ def scheduleTask():
     print(cities)
     for each_city in cities:
         print(each_city[0])
+        data  = get_weather_by_city(each_city[0])
+        with open(f"./weather_json/{each_city[0]}.json", "w") as outfile:
+            json.dump(data, outfile)
+        main = data.get('main')
+        if main:
+            if main['temp'] < 300:
+                with open(f"./email_folder/{each_city[0]}.txt", 'w') as f:
+                    text = f"send mail to {each_city[0]} with temperature {main['temp']}"
+                    f.write(text)
+            
     print("This test runs every 3 seconds")
 
 @app.route("/")
