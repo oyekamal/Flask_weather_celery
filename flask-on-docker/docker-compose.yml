@@ -12,15 +12,15 @@ services:
       - ./.env.dev
     depends_on:
       - db
-      - redis
-    links:
-      - redis
+    #   - redis
+    # links:
+    #   - redis
 
-  redis:
-    restart: always
-    image: redis:latest
-    expose:
-      - 6379
+  # redis:
+  #   restart: always
+  #   image: redis:latest
+  #   expose:
+  #     - 6379
 
   db:
     image: postgres
@@ -31,13 +31,13 @@ services:
       - POSTGRES_PASSWORD=hello_flask
       - POSTGRES_DB=hello_flask_dev
 
-  worker:
-    build: ./services/web
-    command: project/celery -A __init__.celery worker --loglevel=info
-    links:
-      - redis
-    depends_on:
-      - redis
+  # worker:
+  #   build: ./services/web
+  #   command: project/celery -A __init__.celery worker --loglevel=info
+  #   links:
+  #     - redis
+  #   depends_on:
+  #     - redis
 
 volumes:
   postgres_data:

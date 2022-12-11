@@ -1,30 +1,25 @@
 from flask import Flask, request, jsonify
 from flask_marshmallow import Marshmallow
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
-from celery import Celery
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from .weather_request import get_weather_by_city
+
+from flask_apscheduler import APScheduler
+scheduler = APScheduler()
 
 
-import os
+engine = create_engine(
+    'postgresql://hello_flask:hello_flask@db:5432/hello_flask_dev',
+    echo=True
+)
+# postgresql://hello_flask:hello_flask@db:5432/hello_flask_dev
 
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-
-class Config(object):
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite://")
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    CELERY_BROKER_URL = 'redis://localhost:6379/0'
-    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-
+Session = sessionmaker(bind=engine)
+session = Session()
 
 app = Flask(__name__)
-app.config.from_object(Config)
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
-celery.conf.update(app.config)
+app.config.from_object('project.config.Config')
 
 ma = Marshmallow(app)
 db = SQLAlchemy(app)
@@ -41,9 +36,14 @@ class Subscription(db.Model):
 
 class SubscriptionSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
-        model = Subscription
         fields = ('city', 'active')
 
+def scheduleTask():
+    cities = session.query(Subscription.city).distinct().all()
+    print(cities)
+    for each_city in cities:
+        print(each_city[0])
+    print("This test runs every 3 seconds")
 
 @app.route("/")
 def hello_world():

@@ -19,5 +19,6 @@ SQLAlchemy==1.4.44
 tomli==2.0.1
 Werkzeug==2.2.2
 psycopg2-binary==2.9.4
+flask_apscheduler
 redis
 celery
