@@ -53,7 +53,7 @@ def scheduleTask():
                     text = f"send mail to {each_city[0]} with temperature {main['temp']}"
                     f.write(text)
             
-    print("This test runs every 3 seconds")
+    print("This test runs every 30 seconds")
 
 @app.route("/")
 def hello_world():
